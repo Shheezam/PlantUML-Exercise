@@ -1,0 +1,20 @@
+@startuml
+
+participant UI
+participant Customer 
+participant Orders 
+participant Menu 
+participant Payment 
+
+UI -> Menu : GET/ products 
+Menu -> UI : 200
+UI -> Menu : GET/product/:id 
+Menu -> UI : 200
+UI -> Orders : POST /order
+Orders -> Menu : GET /product:id
+Menu -> Orders : 200
+Orders -> UI :201
+
+
+
+@enduml

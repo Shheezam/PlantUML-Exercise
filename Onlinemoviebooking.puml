@@ -1,0 +1,71 @@
+@startuml
+
+
+actor Customer  
+actor Admin 
+participant UI 
+participant OnlineMovieBookingSystem
+participant Movies
+participant Payments
+participant Gateway 
+
+
+=== Customer Login ==
+Customer -> UI : Login
+UI -> OnlineMovieBookingSystem : GET/ Authenticate userToken
+OnlineMovieBookingSystem -> UI : 200 
+
+=== Search & List Matching Movies ==
+Customer -> UI : Search for Movie
+UI -> Movies : GET /movies/:title=title
+Movies -> UI : 200 Matching Movies
+
+=== Select Movie & View Details ==
+Customer -> UI : Select Movie
+UI -> Movies : GET /movies/:id
+Movies -> UI : 200 Movie Details
+
+=== Select Showtime  ==
+Customer -> UI : Select Showtime
+UI -> Movies : GET /movies/:id/showtimes
+Movies -> UI : 200 Showtimes
+
+=== Choose Seats ==
+Customer -> UI : Choose Seats
+UI -> OnlineMovieBookingSystem : POST /reservations
+OnlineMovieBookingSystem -> UI : 200 Seats Available
+
+=== Seat Confirmed & Create Reservation ==
+Customer -> UI : Confirm Reservation
+UI -> OnlineMovieBookingSystem : POST /reservations/:id/payment
+OnlineMovieBookingSystem -> Payments : GET /payments
+Payments -> UI : 200 Payments
+UI -> Gateway : POST /payment
+Gateway -> Payments : 200 
+Payments -> OnlineMovieBookingSystem : 200 Payment Received
+OnlineMovieBookingSystem -> UI : 200 Payment Successful
+OnlineMovieBookingSystem -> UI : 201 Reservation Confirmed
+
+=== Customer Logout ==
+Customer -> UI : Login
+UI -> OnlineMovieBookingSystem : DELETE / userSession
+OnlineMovieBookingSystem -> UI : 200 
+
+=== Admin Add Movie ==
+Admin -> UI: Add Movie
+UI -> OnlineMovieBookingSystem: POST /movies
+OnlineMovieBookingSystem -> Movies : 201 Movie added
+Movies -> OnlineMovieBookingSystem : 200
+OnlineMovieBookingSystem -> UI: 200 Movie added
+
+=== Admin Remove Movie ==
+Admin -> UI: Remove Book
+UI -> OnlineMovieBookingSystem: DELETE /movies/:id
+OnlineMovieBookingSystem -> UI: 200 Movie removed
+
+=== Admin Manage Movie Showtimes ==
+Admin -> UI : Manage Showtimes
+UI -> OnlineMovieBookingSystem : PUT /movies/:id/showtimes
+OnlineMovieBookingSystem -> UI : 200 Showtimes Updated
+
+@enduml 
